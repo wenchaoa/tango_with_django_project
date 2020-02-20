@@ -14,16 +14,16 @@
     <body>
         <div>
         <!-- Page specific content goes here -->
+        
+        {% block body_block %}
+        This is body_block's default content.
+        {% endblock %}
+        </div>
         <div>
         {% block sidebar_block %}
             {% get_category_list category %}
         {% endblock %}
         </div>
-        {% block body_block %}
-        This is body_block's default content.
-        {% endblock %}
-        </div>
-        
         <hr />
         
         <div>
@@ -31,6 +31,10 @@
                 <li><a href="{% url 'rango:add_category' %}">Add a New Category</a></li>
                 <li><a href="{% url 'rango:about' %}">About</a></li>
                 <li><a href="{% url 'rango:index' %}">Index</a></li>
+                <li><a href="{% url 'rango:register' %}">Sign Up</a></li>
+                <li><a href="{% url 'rango:login' %}">Login</a></li>
+                <li><a href="{% url 'rango:restricted' %}">Restricted Page</a></li>
+                <li><a href="{% url 'rango:logout' %}">Logout</a></li>
             </ul>
         </div>
     </body>
