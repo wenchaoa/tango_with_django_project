@@ -1,0 +1,22 @@
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Restricted Page
+{% endblock %}
+    
+{% block body_block %}
+
+<h1>Restricted Page</h1>
+<div>
+    {% if user.is_authenticated %}
+        howdy {{ user.username }}!<br />
+        this is the restricted page
+    {% endif %}
+    <br />
+    <strong>{{ boldmessage }}</strong><br/>
+</div>
+<div>
+<img src="{{ MEDIA_URL }}cat.jpg" alt="Picture of a Cat" /> <!-- New media -->
+</div>
+{% endblock %}

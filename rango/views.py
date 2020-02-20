@@ -43,48 +43,56 @@ def show_category(request, category_name_slug):
     return render(request, 'rango/category.html', context=context_dict)
 
 def add_category(request):
-    form = CategoryForm()
-    
-    if request.method == 'POST':
-        form = CategoryForm(request.POST)
+    if not request.user.is_authenticated:
+        return redirect(reverse('rango:login'))
         
-        if form.is_valid():
-            cat = form.save(commit=True)
-            return redirect('/rango/')
-        else:
-            print(form.errors)
+    else:
+        form = CategoryForm()
+    
+        if request.method == 'POST':
+            form = CategoryForm(request.POST)
+        
+            if form.is_valid():
+                cat = form.save(commit=True)
+                return redirect('/rango/')
+            else:
+                print(form.errors)
             
-    return render(request, 'rango/add_category.html', {'form': form})
+        return render(request, 'rango/add_category.html', {'form': form})
     
 def add_page(request, category_name_slug):
-    try:
-        category = Category.objects.get(slug=category_name_slug)
-    except Category.DoesNotExist:
-        category = None
+    if not request.user.is_authenticated:
+        return redirect(reverse('rango:login'))
+    else:
+        try:
+            category = Category.objects.get(slug=category_name_slug)
+        except Category.DoesNotExist:
+            category = None
         
-    if category is None:
-        return redirect('/rango/')
+        if category is None:
+            return redirect('/rango/')
         
-    form = PageForm()
+        form = PageForm()
     
-    if request.method == 'POST':
-        form = PageForm(request.POST)
+        if request.method == 'POST':
+            form = PageForm(request.POST)
         
-        if form.is_valid():
-            if category:
-                page = form.save(commit=False)
-                page.category = category
-                page.views = 0
-                page.save()
-                
-                return redirect(reverse('rango:show_category',
-                kwargs={'category_name_slug':
-                category_name_slug}))
-        else:
-            print(form.errors)
+            if form.is_valid():
+                if category:
+                    page = form.save(commit=False)
+                    page.category = category
+                    page.views = 0
+                    page.save()
+                  
+                    return redirect(reverse('rango:show_category',
+                    kwargs={'category_name_slug':
+                    category_name_slug}))
+            else:
+                print(form.errors)
     
-    context_dict = {'form': form, 'category': category}
-    return render(request, 'rango/add_page.html', context=context_dict)
+        context_dict = {'form': form, 'category': category}
+        return render(request, 'rango/add_page.html', context=context_dict)
+    
     
 def register(request):
     registered = False
@@ -138,7 +146,8 @@ def some_view(request):
 
 @login_required
 def restricted(request):
-    return HttpResponse("Since you're logged in, you can see this text!")
+    context_dict = {'boldmessage': 'this is the restricted page'}
+    return render(request, 'rango/restricted.html', context=context_dict)
 
 @login_required
 def user_logout(request):
